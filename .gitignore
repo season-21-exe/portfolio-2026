@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+Thumbs.db
+.env*.local
+# Derived from the PDFs by `npm run assets:extract` — regenerate instead of committing
+source-material/_extracted/
+# Local QA screenshots
+.playwright-mcp/

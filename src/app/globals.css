@@ -1,0 +1,228 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────────────────
+   PRUEBA DE IMPRENTA — design tokens
+   One family (Archivo, variable) at three widths:
+   expanded black = display · normal = text · condensed = slug/meta.
+   ────────────────────────────────────────────────────────────────────────── */
+@theme {
+  --color-carbon: #1a1918;
+  --color-carbon-2: #252422;
+  --color-paper: #e8e7e2;
+  --color-paper-2: #dddbd5;
+  --color-grey: #8b8984;
+  --color-grey-ink: #5c5a56; /* secondary text on paper (5.4:1) */
+  --color-grey-light: #a8a6a0; /* secondary text on carbon (7:1) */
+  --color-signal: #ff3d17; /* the red plate */
+  --color-signal-deep: #c9280a; /* signal for text on paper (AA large) */
+
+  --font-sans: var(--font-archivo), "Arial", sans-serif;
+
+  --ease-print: cubic-bezier(0.7, 0, 0.2, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Element defaults live in the base layer so Tailwind utilities (hidden, block…) can override them. */
+@layer base {
+  :root {
+    --gutter: clamp(1rem, 2.6vw, 2.5rem);
+    --header-h: 4.25rem;
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-carbon);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    font-variation-settings: "wdth" 100;
+    overflow-x: clip;
+  }
+
+  ::selection { background: var(--color-signal); color: var(--color-carbon); }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  img, picture, video, svg { display: block; max-width: 100%; }
+}
+
+/* ── Type roles ──────────────────────────────────────────────────────────── */
+@layer components {
+  .t-display {
+    font-weight: 900;
+    font-variation-settings: "wdth" 125;
+    text-transform: uppercase;
+    letter-spacing: -0.035em;
+    line-height: 0.84;
+  }
+  .t-headline {
+    font-weight: 800;
+    font-variation-settings: "wdth" 118;
+    letter-spacing: -0.025em;
+    line-height: 0.95;
+    text-wrap: balance;
+  }
+  .t-lead {
+    font-size: clamp(1.3rem, 1.05rem + 1vw, 2rem);
+    line-height: 1.22;
+    font-weight: 450;
+    letter-spacing: -0.012em;
+    text-wrap: pretty;
+  }
+  .t-body {
+    max-width: 62ch;
+    text-wrap: pretty;
+  }
+  /* Condensed slug type: the voice of the margins (file names, folios, specs). */
+  .t-slug {
+    font-variation-settings: "wdth" 62;
+    font-weight: 500;
+    font-size: 0.8125rem;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+    font-feature-settings: "tnum" 1;
+  }
+  .t-meta {
+    font-variation-settings: "wdth" 75;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1.35;
+  }
+
+  /* ── Surfaces ──────────────────────────────────────────────────────────── */
+  .surface-paper {
+    background-color: var(--color-paper);
+    color: var(--color-carbon);
+    position: relative;
+    isolation: isolate;
+  }
+  .surface-paper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* One sheet of Iván’s crumpled-paper scan, never tiled (it isn’t seamless). */
+    background-image: url("/assets/global/textura-papel-2400.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    mix-blend-mode: multiply;
+    opacity: 0.2;
+  }
+  .surface-ink {
+    background-color: var(--color-carbon);
+    color: var(--color-paper);
+    position: relative;
+    isolation: isolate;
+  }
+  .surface-ink::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.09;
+  }
+
+  /* ── Links ─────────────────────────────────────────────────────────────── */
+  .link-ink {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.45s var(--ease-out-quint);
+  }
+  .link-ink:hover { background-size: 0% 1px; background-position: 100% 100%; }
+
+  .pad-x { padding-inline: var(--gutter); }
+}
+
+@keyframes scrollcue {
+  0% { transform: translateY(-100%); }
+  65%, 100% { transform: translateY(210%); }
+}
+
+/* A filtered pile is laid down again */
+@keyframes sheetin {
+  from { opacity: 0; transform: translateY(4vh); }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   NAVIGATION — native view transitions (React <ViewTransition> + Link transitionTypes)
+   nav-forward: the opened sheet's key visual + title morph into the case study
+                (.morph); the rest of the old page sinks back, the new page is
+                laid on top like a fresh sheet.
+   nav-back:    a quieter cross-dissolve back to the pile.
+   ────────────────────────────────────────────────────────────────────────── */
+::view-transition { pointer-events: none; }
+
+/* The header is the fixed reference: it never moves. */
+::view-transition-group(site-header) { animation: none; z-index: 100; }
+::view-transition-old(site-header) { display: none; }
+::view-transition-new(site-header) { animation: none; }
+
+/* Shared objects travel on the press curve */
+::view-transition-group(.morph) {
+  animation-duration: 780ms;
+  animation-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
+  z-index: 50;
+}
+::view-transition-old(.morph),
+::view-transition-new(.morph) {
+  animation-duration: 780ms;
+  animation-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+@keyframes vt-sink { to { opacity: 0.35; transform: scale(0.94); filter: brightness(0.55); } }
+@keyframes vt-lay { from { transform: translateY(100vh); } }
+@keyframes vt-fade-out { to { opacity: 0; } }
+@keyframes vt-fade-in { from { opacity: 0; } }
+
+/* Page boundaries (components/motion/PageSheet.tsx) */
+::view-transition-old(.page-sink) {
+  animation: 700ms cubic-bezier(0.7, 0, 0.2, 1) both vt-sink;
+  transform-origin: 50% 0%;
+}
+::view-transition-new(.page-lay) {
+  animation: 760ms cubic-bezier(0.7, 0, 0.2, 1) both vt-lay;
+  box-shadow: 0 -40px 80px -30px rgba(0, 0, 0, 0.6);
+}
+::view-transition-old(.page-fade-out) { animation: 220ms ease-in both vt-fade-out; }
+::view-transition-new(.page-fade-in) { animation: 420ms ease-out 100ms both vt-fade-in; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* Smoothly re-theme case studies (Valhalla variety switcher etc.) */
+.theme-transition { transition: background-color 0.6s var(--ease-print), color 0.6s var(--ease-print); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
