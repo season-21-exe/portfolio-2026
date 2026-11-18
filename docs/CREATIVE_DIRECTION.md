@@ -101,3 +101,52 @@ Reviewed on the rendered site, screen by screen. What was wrong, and what change
 | Phones: titles hidden behind tall objects | Covers stack on phones: masthead on top, object standing below |
 
 **Removed rather than added:** the GSAP page curtain, the asymmetric card grid and its Flip animation, the hover second-image swap, and a lead paragraph in four case studies.
+
+## 8. Third pass: "Edición 2026" redesign
+
+The site is now set as **one edition**: a front cover, an exhibition in three rooms, a profile, and a back cover. The print heritage stays (a red plate printed slightly out of register, thin rules, numbered folios), but it's quieter and more editorial. Where this section conflicts with sections 2–4, it supersedes them. (The exhibition was later replaced by the pile again: see §9.)
+
+**System**
+- **Type.** Archivo at three widths: *expanded black* for names and titles, *condensed black* for the profession, room names and pull lines, and *normal* for reading. IBM Plex Mono for every technical label: numbers, categories, metadata and captions. Projects keep their own faces inside their case studies.
+- **Colour.** Charcoal `#151413`, warm paper `#ECEBE5`, three greys, and one signal red `#FF4317`, used only for the plate, active states, numbers and the "@" of the address.
+- **Numbering.** Projects 01–06 come from a single source; chapters are 02.1, 02.2…; the cover and the index overlay use the same numbers.
+
+**What changed, and why**
+
+| Weakness found | Change |
+|---|---|
+| The first screen lacked impact; the profession was small | **Cover**: IVÁN ORDÓÑEZ and DISEÑADOR GRÁFICO both fill the measure (fitted with container units). The red plate slides into register; a cover story cycles one photograph per project, with a numbered 01–06 index that shows timing and lets you pick |
+| Six sheets of equal weight; counters that didn't add up (4 + 2 + 2 = 8 for 6 projects) | **Exhibition** in three rooms of two: *Destacados* (Valhalla wide with its label laid over, Be Star split with its unfolded label crossing the gutter), *Identidad* (Cirquera large, Indómita offset with vertical captions), *Editorial* (HOTRACE and Herb Lubalin as the two pages of one open spread). The groups are exclusive, so the counts are 2 + 2 + 2 = 6 |
+| "Prueba 1/6" and InDesign slug lines read as debug output | Removed everywhere |
+| "Quién / Quién / soy" read as a duplicated heading | **Sobre mí**: one heading, the polaroid, his intro, one sentence of his own set large, and a data sheet whose disciplines link to the projects that show them (by number) |
+| The email appeared about 17 times (tear-off tabs, footer, buttons) | **Back cover**: HABLEMOS with the cover's plate, the address once at full measure, one copy button, Instagram. The footer repeats contact only on pages without this section |
+| The navigation gave no sense of position | **Sticky bar**: transparent over the cover, solid on scroll, with the active section marked and the project in view named (01 Valhalla). In case studies: ← Trabajo, number and title, the current chapter, and a reading-progress rule |
+| HOTRACE spreads too small to read | **Readable pages**: spreads stacked at the largest size the screen allows, an "En este número" contents list beside the cover, a full-resolution viewer (drag or pinch to read), and detail crops of the typography |
+| Case studies were one long column of figures | Shared framework: chapter label, title in the project's face, two-column text, full-bleed images, a **family matrix** (Valhalla: three varieties × four labels), **detail crops** (HOTRACE, Lubalin) and the Indómita manual cover opening its case |
+| The hero cover repeated the first exhibition image | Each project can set a separate cover-story photograph (`poster`) |
+
+**Motion**: the cover's entrance (lines rising, the plate sliding into register, the rule drawing); the plate following the pointer; cover-story wipes with progress bars; number folios rising digit by digit; image reveals; the card → case-study morph; the back cover printing on arrival; the index overlay wipe. All of it is off under `prefers-reduced-motion`.
+
+**Removed**: the marquee band, the torn-paper edges, the tear-off tabs, the running head, the slug lines, crop marks, the filter/list views, rounded badges.
+
+**Review passes** (on the rendered site, at 390 / 768 / 1024 / 1440 / 1920 px):
+1. *Visual design*: the plate printed 0.16 em too high (a margin-collapse bug), fixed with `flow-root`. Overlays on the Valhalla and Be Star cards covered their captions, so they were repositioned. The Indómita card cropped its logo, so it's now square. Section titles were too small on phones and now fill the measure.
+2. *Experience*: the header named the wrong project when two cards shared the screen (it now follows reading order); the cover caption truncated at tablet width; HOTRACE contents entries started in lower case. The spread viewer was checked for focus, Esc, return focus and drag-to-pan.
+3. *Creative direction*: the cover no longer repeats the exhibition's first image; one sentence of Iván's own words carries the profile; the closing mirrors the cover, so the site reads as one edition from front to back.
+
+## 9. The pile, restored
+
+At Iván's request (17 Nov 2026), the work section goes back to **the pile** from the second pass (§7). Every project is a full sheet in its own inks and typeface, and as you scroll each new sheet is laid on top of the last. The rest of the third pass stays. This section supersedes the *Exhibition* row of §8.
+
+- **Order and groups.** The sheets follow the hierarchy (Destacados, then Identidad, then Editorial). Each sheet names its group next to its number ("01 · Destacados"), so the count still reads 2 + 2 + 2 = 6. The category filters stay out: they were the counters that didn't add up.
+- **Stacking.** The sheets are sticky (pure CSS; scrolling stays native) whenever a whole sheet fits the screen, that is, at least 560 px tall. On shorter screens they simply follow one another, so the foot of a sheet is never covered before it has been seen.
+- **The bar takes the sheet's inks.** While a project's sheet is under the header (in the pile, at the opening of a case study, or as the next-project sheet), the bar takes that project's ground and ink, so the sheet runs edge to edge. The colour changes the moment a sheet meets the bar, with no fade, so the type never passes through an unreadable midpoint.
+- **Position.** The bar names the sheet on top, which is the last one laid, not the first one crossing the reading line.
+- **Links to a sheet** (`/#p-<slug>`, such as the case study's *Trabajo* breadcrumb) aim at fixed marks where each sheet comes to rest, because a stuck sheet's own box travels with the scroll. When keyboard focus lands on a covered sheet, that sheet is brought back on top.
+- **Removed with the exhibition:** the room layouts, the overlaid details (`cardDetail`) and the rising folios (`NumberReveal`).
+
+
+### 9.1 Brand faces and the faint key visual (2026-11-17)
+
+- Iván supplied the brand faces (`src/fonts/<project>/`, see its LEEME.md). Each project's **name** is now set in its own brand face (`theme.brand`): Njord Alternate (Valhalla), Aquavit Extrabold (Cirquera, also its headings, as its manual says), Sparkling Valentine (Be Star, the face reserved for the brand name), Bebas Neue (HOTRACE). Indómita and Herb Lubalin keep Archivo until their files arrive.
+- On the pile sheets and the "next project" sheet, the key visual is no longer an object standing in front of the name: it fills the sheet behind it, in greyscale at low opacity (luminosity blend on dark grounds, multiply on light), so the corporate colour leads and the name reads first. The case-study opening keeps the full-strength visual; the morph carries it from faint to full.

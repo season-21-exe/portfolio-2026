@@ -16,7 +16,7 @@ Everything the site needs from you, in priority order. Each item says **where to
 
 ## 🟠 Missing material
 
-6. **LA TORCIDA** and **DYNA CREATIVE LAB**: no files were supplied. To publish them, add their PDFs and images to `source-material/` and convert the stubs in `draftProjects` (end of `projects.ts`) into full projects. Keep them as **two separate identities**, as the brief asks.
+6. **LA TORCIDA** and **DYNA CREATIVE LAB**: no files were supplied. The redesign brief allows LA TORCIDA only if your contribution can be honestly identified; with no material there is nothing to identify, so neither is on the site. To publish them, add their PDFs and images to `source-material/`, say what you did in each, and convert the stubs in `draftProjects` (end of `projects.ts`) into full projects. Keep them as **two separate identities**.
 7. **Years** of every project (all `year: null`, so the "Año" line is hidden).
 8. **Indómita**: real client or academic brief? Who made the "ESCOCIA" posters and where are the photos from? Why do the variants use orange and navy, which the colour chapter doesn't list?
 9. **HOTRACE / Herb Lubalin**: academic or personal? Software used? (InDesign is likely, but it isn't stated, so no tools are shown.)
@@ -25,7 +25,8 @@ Everything the site needs from you, in priority order. Each item says **where to
 
 ## 🟡 Wording to approve
 
-12. **Hero statement**: *"Diseño marcas que se reconocen, envases que se abren y páginas que se leen."* (`site.statement`)
+12. **Cover lines.** The site is in Spanish, so the brief's suggested English lines were set in Spanish: *IVÁN ORDÓÑEZ / DISEÑADOR GRÁFICO / IDENTIDAD · PACKAGING · EDITORIAL*, and the statement *"Diseño identidades visuales, packaging y publicaciones con carácter."* (`site.title`, `site.disciplines`, `site.statement`). If you'd rather have the English *GRAPHIC DESIGNER*, change `site.title`; the type refits itself.
+12b. **Pull line in "Sobre mí"**: *"Composiciones con carácter: propuestas que transmiten personalidad y fuerza."* It's taken word for word from your third bio paragraph and set large (`About.tsx`). Approve it or pick another sentence of yours.
 13. **Contact invitation**: *"¿Tienes un proyecto de marca, packaging o editorial? Escríbeme y lo hablamos."* (`site.contact.invitation`). It doesn't promise availability; adjust if you're actively looking for a job.
 14. **Bio** (`site.bio`): rewritten from your PDF. Your PDF calls your studies both "Diseño Gráfico" and "Diseño y edición de publicaciones impresas y multimedia"; the site uses the latter, the official title from your CV slide. Please confirm.
 15. **School name**: the site uses "Escola del Treball de Barcelona" (as on the logo); your text says "Escuela del Trabajo".

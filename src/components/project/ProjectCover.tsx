@@ -2,9 +2,11 @@
 
 import { useRef, ViewTransition, type CSSProperties, type ElementType } from "react";
 import type { Project } from "@/data/types";
+import { groups } from "@/data/projects";
 import { ui } from "@/i18n/ui";
 import { tx, type Locale } from "@/lib/i18n";
 import { isDark } from "@/lib/color";
+import { titleFace } from "@/lib/titleFace";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { Picture, getAsset } from "@/components/ui/Picture";
 import { TransitionLink, arrivedByTransition } from "@/components/motion/PageTransition";
@@ -24,8 +26,10 @@ export type CoverVariant = "index" | "hero" | "next";
 
 /** Shared-element morph only on typed in-app navigations; never on filter changes etc. */
 const SHARE = { "nav-forward": "morph", "nav-back": "morph", default: "none" };
+/** Photographs change crop between the exhibition card and the feature: morph them as filled frames. */
+const SHARE_PHOTO = { "nav-forward": "morph-photo", "nav-back": "morph-photo", default: "none" };
 
-export function ProjectCover({ p, n, total, variant, locale = "es" }: { p: Project; n: number; total: number; variant: CoverVariant; locale?: Locale }) {
+export function ProjectCover({ p, n, variant, locale = "es" }: { p: Project; n: number; variant: CoverVariant; locale?: Locale }) {
   const t = ui(locale);
   const root = useRef<HTMLDivElement>(null);
   const v = p.visual;
@@ -36,13 +40,15 @@ export function ProjectCover({ p, n, total, variant, locale = "es" }: { p: Proje
   const a = getAsset(v.media.key);
   const ratio = a.width / a.height;
   const isHero = variant === "hero";
+  const face = titleFace(p);
   const Title: ElementType = isHero ? "h1" : variant === "index" ? "h3" : "p";
-  const folio = `${String(n).padStart(2, "0")}/${String(total).padStart(2, "0")}`;
-  const cats = p.categories.map((c) => t.categories[c]).join(" / ");
+  const num = String(n).padStart(2, "0");
+  const group = groups.find((g) => g.id === p.group)?.title;
+  const cats = tx(p.label, locale);
   const who = p.authorship === "individual" ? t.work.individual : t.work.team;
 
   // Title fitted to the measure (longest word, measured in the project's own face), capped by height.
-  const titleSize = `min(calc((100vw - 2 * var(--gutter)) / ${v.fitEm}), ${v.layout === "masthead" ? "26svh" : "34svh"})`;
+  const titleSize = `min(calc((100vw - 2 * var(--gutter)) / ${v.fitEm}), ${!isHero ? "32svh" : v.layout === "masthead" ? "26svh" : "34svh"})`;
 
   // Direct visits get a short printed intro; arriving through a morph, the morph *is* the intro.
   useGSAP(
@@ -78,8 +84,8 @@ export function ProjectCover({ p, n, total, variant, locale = "es" }: { p: Proje
   const title = (
     <ViewTransition name={`vt-title-${p.slug}`} share={SHARE} default="none">
       <Title
-        className={`relative flow-root font-black uppercase leading-[0.84] tracking-[-0.035em] ${v.layout === "behind" ? "text-center" : ""}`}
-        style={{ fontSize: titleSize, fontFamily: p.theme.display ?? "var(--font-archivo)", fontVariationSettings: '"wdth" 125', color: titleColor, textWrap: "balance" }}
+        className={`relative flow-root leading-[0.84] ${face.className} ${isHero && v.layout === "behind" ? "text-center" : ""}`}
+        style={{ ...face.style, fontSize: titleSize, color: titleColor, textWrap: "balance" }}
       >
         <span className="relative -mt-[0.22em] block overflow-hidden pb-[0.04em] pt-[0.22em]">
           <span data-line className="block">
@@ -103,11 +109,21 @@ export function ProjectCover({ p, n, total, variant, locale = "es" }: { p: Proje
           </TransitionLink>
           <span aria-hidden>/</span>
           <span aria-current="page" className="tabular-nums">
-            {folio} {p.title}
+            {num} {p.title}
           </span>
         </nav>
       ) : (
-        <span className="tabular-nums">{variant === "next" ? t.case.next : folio}</span>
+        <span className="tabular-nums">
+          {variant === "next" ? (
+            t.case.next
+          ) : (
+            <>
+              {num}
+              {group ? <span className="mx-2 opacity-60">·</span> : null}
+              {group}
+            </>
+          )}
+        </span>
       )}
       <span className="text-right">
         {cats}
@@ -124,7 +140,7 @@ export function ProjectCover({ p, n, total, variant, locale = "es" }: { p: Proje
       </p>
       {isHero ? (
         <a href="#case-intro" className="t-meta justify-self-start md:col-span-3 md:col-start-10 md:justify-self-end">
-          <span className="link-ink">{t.hero.scroll}</span>
+          <span className="link-ink">{t.case.scroll}</span>
         </a>
       ) : (
         <span
@@ -141,15 +157,33 @@ export function ProjectCover({ p, n, total, variant, locale = "es" }: { p: Proje
     <ViewTransition name={`vt-sheet-${p.slug}`} share={SHARE} default="none">
     <div
       ref={root}
+      data-sheet={p.slug}
       className="relative isolate flex h-[100svh] min-h-[560px] flex-col overflow-hidden pad-x pb-5 pt-[calc(var(--header-h)+0.6rem)]"
       style={{ background: ground, color: ink }}
     >
       {topRow}
 
-      {v.layout === "masthead" ? (
+      {!isHero ? (
+        <>
+          {/* The key visual, large and faint behind the name: the project's own inks lead. */}
+          <ViewTransition name={`vt-visual-${p.slug}`} share={SHARE_PHOTO} default="none">
+            <div data-object aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+              <Picture
+                k={v.media.key}
+                alt=""
+                sizes="100vw"
+                className="block h-full w-full"
+                imgClassName={`h-full w-full object-cover grayscale ${dark ? "opacity-[0.1] mix-blend-luminosity" : "opacity-[0.12] mix-blend-multiply"} transition-[opacity,transform] duration-[1.4s] ease-[var(--ease-out-quint)] group-hover:scale-[1.03] ${dark ? "group-hover:opacity-[0.18]" : "group-hover:opacity-[0.2]"}`}
+                style={{ objectPosition: v.backdropFocus ?? v.focus ?? "50% 50%" }}
+              />
+            </div>
+          </ViewTransition>
+          <div className="relative z-10 my-4 flex min-h-0 flex-1 flex-col justify-center">{title}</div>
+        </>
+      ) : v.layout === "masthead" ? (
         <>
           <div className="relative z-10 mt-3">{title}</div>
-          <ViewTransition name={`vt-visual-${p.slug}`} share={SHARE} default="none">
+          <ViewTransition name={`vt-visual-${p.slug}`} share={SHARE_PHOTO} default="none">
             <div data-object className="relative -mx-[var(--gutter)] my-4 min-h-0 flex-1 overflow-hidden">
               <Picture
                 k={v.media.key}

@@ -146,12 +146,12 @@ Every image on the website, where it comes from, and the label it carries on the
 | `indomita/logotipo-verde` | `images/indomita/indomita-logotipo-verde.png` | 407×407 | — (not used) | yes |
 | `indomita/escocia-gaitero` | `images/indomita/indomita-escocia-cartel-gaitero.jpg` | 2400×3367 | flat |  |
 | `indomita/escocia-viaducto` | `images/indomita/indomita-escocia-cartel-viaducto.jpg` | 2400×3367 | flat |  |
-| `indomita/portada-manual` | `_extracted/indomita/indomita-portada-manual.png` | 2400×1600 | — (not used) |  |
+| `indomita/portada-manual` | `_extracted/indomita/indomita-portada-manual.png` | 2400×1600 | manual |  |
 | `indomita/construccion` | `_extracted/indomita/indomita-construccion.png` | 1485×426 | manual |  |
 | `indomita/area-proteccion` | `_extracted/indomita/indomita-area-proteccion.png` | 814×792 | manual |  |
 | `indomita/medidas-serigrafia` | `_extracted/indomita/indomita-medidas-serigrafia.png` | 2000×1094 | — (not used) |  |
 | `indomita/medidas-digital` | `_extracted/indomita/indomita-medidas-digital.png` | 2000×1094 | manual |  |
-| `indomita/tipografia-principal` | `_extracted/indomita/indomita-tipografia-principal.png` | 2000×1094 | — (not used) |  |
+| `indomita/tipografia-principal` | `_extracted/indomita/indomita-tipografia-principal.png` | 2000×1094 | manual |  |
 | `indomita/tipografia-secundaria` | `_extracted/indomita/indomita-tipografia-secundaria.png` | 2000×1094 | — (not used) |  |
 | `indomita/variante-fotografia` | `_extracted/indomita/indomita-variante-fotografia.png` | 1215×1214 | manual |  |
 | `indomita/variante-apilada-fotografia` | `_extracted/indomita/indomita-variante-apilada-fotografia.png` | 2400×2398 | manual |  |
@@ -190,4 +190,6 @@ Every image on the website, where it comes from, and the label it carries on the
 | `herb-lubalin/ref-fact` | `images/herb_lubalin/referencia-lubalin-fact.jpg` | 903×1153 | reference |  |
 | `herb-lubalin/ref-saturday-evening-post` | `images/herb_lubalin/referencia-lubalin-saturday-evening-post.jpg` | 870×1075 | reference |  |
 
-**Prepared but not placed** (available alternates; reference the key in `projects.ts` to use one): `be-star/esko-caja-plegado`, `be-star/caja-tres-vistas`, `valhalla/beer-caja-y-botellas`, `cirquera/ilustracion-columpios`, `cirquera/tarjetas-mesa`, `cirquera/portada-degradado`, `cirquera/acrobata-escenario`, `indomita/logotipo-verde`, `indomita/portada-manual`, `indomita/medidas-serigrafia`, `indomita/tipografia-principal`, `indomita/tipografia-secundaria`, `indomita/app-pantalla`, `indomita/incorrecto-composicion`.
+**Prepared but not placed** (available alternates; reference the key in `projects.ts` to use one): `be-star/esko-caja-plegado`, `be-star/caja-tres-vistas`, `valhalla/beer-caja-y-botellas`, `cirquera/ilustracion-columpios`, `cirquera/tarjetas-mesa`, `cirquera/portada-degradado`, `cirquera/acrobata-escenario`, `indomita/logotipo-verde`, `indomita/medidas-serigrafia`, `indomita/tipografia-secundaria`, `indomita/app-pantalla`, `indomita/incorrecto-composicion`.
+
+**Home cover story.** The cover on the home page cycles one photograph per project: `poster` when a project sets one (Valhalla `valhalla/grifos`, Cirquera `cirquera/ilustracion-equilibrista`, Indómita `indomita/portada-manual`), otherwise its `cover`. This keeps the cover from repeating the key visuals of the pile right below it.

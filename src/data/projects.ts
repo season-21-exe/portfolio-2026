@@ -1,4 +1,4 @@
-import type { DraftProject, Media, Project } from "./types";
+import type { DraftProject, Media, Project, Variety } from "./types";
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -20,22 +20,92 @@ const m = (key: Media["key"], alt: string, kind: Media["kind"], extra: Partial<M
 // ════════════════════════════════════════════════════════════════════════════
 // VALHALLA
 // ════════════════════════════════════════════════════════════════════════════
+/** Shared by the family matrix and the variety switcher. */
+const valhallaVarieties: Variety[] = [
+  {
+    id: "beer",
+    name: "Valhalla Beer",
+    tagline: "La principal",
+    description: "La cerveza principal de la gama, de sabor suave. Beige y azul noche.",
+    theme: { bg: "#EADCBF", ink: "#1C2C3E", accent: "#1C2C3E" },
+    colors: [
+      { name: "Beige", hex: "#EADCBF", cmyk: "C10 M13 Y29 K0", rgb: "234 220 191" },
+      { name: "Azul noche", hex: "#1C2C3E", cmyk: "C93 M74 Y48 K55", rgb: "28 44 62" },
+    ],
+    labels: [
+      m("valhalla/beer-etiqueta-cabeza", "Etiqueta frontal de Valhalla Beer con una cabeza vikinga en azul sobre beige.", "flat"),
+      m("valhalla/beer-etiqueta-barco", "Etiqueta frontal de Valhalla Beer con un drakkar en azul sobre beige.", "flat"),
+      m("valhalla/beer-etiqueta-dorsal", "Etiqueta dorsal de Valhalla Beer con cenefas nórdicas, información nutricional y código de barras.", "flat"),
+    ],
+    cap: m("valhalla/beer-tapon", "Etiqueta de tapón de Valhalla Beer: nudo celta azul sobre beige.", "flat"),
+    bottles: m("valhalla/beer-botellas", "Cuatro vistas 3D de la botella de Valhalla Beer: frontal, lateral, dorsal y tres cuartos.", "render"),
+    box: m("valhalla/beer-caja-3d", "Tres vistas 3D de la caja de dos botellas de Valhalla Beer.", "render"),
+    dieline: m("valhalla/beer-troquel", "Troquel desplegado de la caja de Valhalla Beer.", "flat"),
+    scene: m("valhalla/beer-ambiente", "Caja y botellas de Valhalla Beer sobre una mesa de picnic junto a una barbacoa.", "ambient"),
+  },
+  {
+    id: "gold",
+    name: "Valhalla Gold",
+    tagline: "La intensa",
+    description: "Sabor más fuerte. El dorado resalta las ilustraciones sobre un negro intenso.",
+    theme: { bg: "#0A0A0A", ink: "#CBAD4E", accent: "#CBAD4E" },
+    colors: [
+      { name: "Negro", hex: "#000000", cmyk: "C91 M79 Y62 K97", rgb: "0 0 0" },
+      { name: "Oro", hex: "#CBAD4E", cmyk: "C21 M27 Y76 K6", rgb: "203 173 78" },
+    ],
+    labels: [
+      m("valhalla/gold-etiqueta-cabeza", "Etiqueta frontal de Valhalla Gold con la cabeza vikinga en dorado sobre negro.", "flat"),
+      m("valhalla/gold-etiqueta-barco", "Etiqueta frontal de Valhalla Gold con el drakkar en dorado sobre negro.", "flat"),
+      m("valhalla/gold-etiqueta-dorsal", "Etiqueta dorsal de Valhalla Gold en negro con cenefas doradas.", "flat"),
+    ],
+    cap: m("valhalla/gold-tapon", "Etiqueta de tapón de Valhalla Gold: nudo celta dorado sobre negro.", "flat"),
+    bottles: m("valhalla/gold-botellas", "Cuatro vistas 3D de la botella de Valhalla Gold.", "render"),
+    box: m("valhalla/gold-caja-3d", "Tres vistas 3D de la caja negra y dorada de Valhalla Gold.", "render"),
+    dieline: m("valhalla/gold-troquel", "Troquel desplegado de la caja de Valhalla Gold.", "flat"),
+    scene: m("valhalla/gold-ambiente", "Caja y botellas de Valhalla Gold sobre una mesa de madera en un bosque.", "ambient"),
+  },
+  {
+    id: "radler",
+    name: "Valhalla Radler",
+    tagline: "La de limón",
+    description: "Sabor a limón. Amarillo limón de fondo y negro para las ilustraciones.",
+    theme: { bg: "#F7EE8B", ink: "#000000", accent: "#000000" },
+    colors: [
+      { name: "Limón", hex: "#F7EE8B", cmyk: "C7 M0 Y57 K0", rgb: "247 238 139" },
+      { name: "Negro", hex: "#000000", cmyk: "C91 M79 Y62 K97", rgb: "0 0 0" },
+    ],
+    labels: [
+      m("valhalla/radler-etiqueta-cabeza", "Etiqueta frontal de Valhalla Radler con la cabeza vikinga en negro sobre amarillo limón.", "flat"),
+      m("valhalla/radler-etiqueta-barco", "Etiqueta frontal de Valhalla Radler con el drakkar en negro sobre amarillo limón.", "flat"),
+      m("valhalla/radler-etiqueta-dorsal", "Etiqueta dorsal de Valhalla Radler en amarillo con cenefas negras.", "flat"),
+    ],
+    cap: m("valhalla/radler-tapon", "Etiqueta de tapón de Valhalla Radler: nudo celta negro sobre amarillo.", "flat"),
+    bottles: m("valhalla/radler-botellas", "Cuatro vistas 3D de la botella de Valhalla Radler.", "render"),
+    box: m("valhalla/radler-caja-3d", "Tres vistas 3D de la caja amarilla de Valhalla Radler.", "render"),
+    dieline: m("valhalla/radler-troquel", "Troquel desplegado de la caja de Valhalla Radler.", "flat"),
+    scene: m("valhalla/radler-ambiente", "Un grupo de amigos en una barbacoa con la caja de Valhalla Radler en primer plano.", "ambient"),
+  },
+];
+
 const valhalla: Project = {
   slug: "valhalla",
   title: "Valhalla",
   tagline: "Una marca, tres temperamentos. Identidad y packaging para una gama de cervezas de inspiración nórdica.",
   summary: "Identidad, etiquetas y cajas para tres cervezas —Beer, Gold y Radler— que comparten lenguaje visual y se distinguen por el color.",
   categories: ["packaging", "identidad"],
+  group: "destacados",
+  label: "Identidad y packaging",
   disciplines: ["Identidad visual", "Packaging", "Diseño estructural", "Visualización 3D"],
   year: null,
   context: "Proyecto académico · Escola del Treball de Barcelona · Diseño estructural de envase y embalaje",
   authorship: "individual",
   role: "Proyecto individual: identidad, diseño de etiquetas y cajas, desarrollo estructural y visualización 3D.",
   tools: ["Adobe Illustrator", "Esko Studio", "ArtiosCAD (vía Esko)"],
-  theme: { bg: "#1C2C3E", ink: "#EADCBF", accent: "#CBAD4E", alt: "#EADCBF", altInk: "#1C2C3E", soft: "#F3EEE2", display: "var(--font-montserrat)" },
+  theme: { bg: "#1C2C3E", ink: "#EADCBF", accent: "#CBAD4E", alt: "#EADCBF", altInk: "#1C2C3E", soft: "#F3EEE2", display: "var(--font-montserrat)", brand: { family: "var(--font-njord)", upper: true } },
   inks: ["#1C2C3E", "#CBAD4E", "#F7EE8B"],
+  poster: m("valhalla/grifos", "Tres grifos de cerveza con los medallones de nudo celta de Valhalla en dorado, plateado y negro.", "mockup"),
   cover: m("valhalla/cajas-tres-variedades", "Las tres cajas de Valhalla —Beer, Gold y Radler— con sus botellas sobre la barra de un bar.", "mockup"),
-  visual: { media: m("valhalla/cajas-tres-variedades", "Las tres cajas de Valhalla —Beer, Gold y Radler— con sus botellas sobre la barra de un bar.", "mockup"), mode: "photo", layout: "masthead", focus: "50% 62%", fitEm: 5.66 },
+  visual: { media: m("valhalla/cajas-tres-variedades", "Las tres cajas de Valhalla —Beer, Gold y Radler— con sus botellas sobre la barra de un bar.", "mockup"), mode: "photo", layout: "masthead", focus: "50% 62%", fitEm: 5.6 },
   sections: [
     {
       id: "encargo",
@@ -58,72 +128,14 @@ const valhalla: Project = {
       ],
       blocks: [
         {
+          type: "matrix",
+          columns: ["Frontal · cabeza vikinga", "Frontal · drakkar", "Dorsal", "Tapón"],
+          rows: valhallaVarieties.map((v) => ({ label: v.name.replace("Valhalla ", ""), ground: v.theme.bg, ink: v.theme.ink, items: [...v.labels, v.cap] })),
+          note: "Las cuatro etiquetas de cada variedad: dos frontales, la dorsal y la del tapón.",
+        },
+        {
           type: "varieties",
-          varieties: [
-            {
-              id: "beer",
-              name: "Valhalla Beer",
-              tagline: "La principal",
-              description: "La cerveza principal de la gama, de sabor suave. Beige y azul noche.",
-              theme: { bg: "#EADCBF", ink: "#1C2C3E", accent: "#1C2C3E" },
-              colors: [
-                { name: "Beige", hex: "#EADCBF", cmyk: "C10 M13 Y29 K0", rgb: "234 220 191" },
-                { name: "Azul noche", hex: "#1C2C3E", cmyk: "C93 M74 Y48 K55", rgb: "28 44 62" },
-              ],
-              labels: [
-                m("valhalla/beer-etiqueta-cabeza", "Etiqueta frontal de Valhalla Beer con una cabeza vikinga en azul sobre beige.", "flat"),
-                m("valhalla/beer-etiqueta-barco", "Etiqueta frontal de Valhalla Beer con un drakkar en azul sobre beige.", "flat"),
-                m("valhalla/beer-etiqueta-dorsal", "Etiqueta dorsal de Valhalla Beer con cenefas nórdicas, información nutricional y código de barras.", "flat"),
-              ],
-              cap: m("valhalla/beer-tapon", "Etiqueta de tapón de Valhalla Beer: nudo celta azul sobre beige.", "flat"),
-              bottles: m("valhalla/beer-botellas", "Cuatro vistas 3D de la botella de Valhalla Beer: frontal, lateral, dorsal y tres cuartos.", "render"),
-              box: m("valhalla/beer-caja-3d", "Tres vistas 3D de la caja de dos botellas de Valhalla Beer.", "render"),
-              dieline: m("valhalla/beer-troquel", "Troquel desplegado de la caja de Valhalla Beer.", "flat"),
-              scene: m("valhalla/beer-ambiente", "Caja y botellas de Valhalla Beer sobre una mesa de picnic junto a una barbacoa.", "ambient"),
-            },
-            {
-              id: "gold",
-              name: "Valhalla Gold",
-              tagline: "La intensa",
-              description: "Sabor más fuerte. El dorado resalta las ilustraciones sobre un negro intenso.",
-              theme: { bg: "#0A0A0A", ink: "#CBAD4E", accent: "#CBAD4E" },
-              colors: [
-                { name: "Negro", hex: "#000000", cmyk: "C91 M79 Y62 K97", rgb: "0 0 0" },
-                { name: "Oro", hex: "#CBAD4E", cmyk: "C21 M27 Y76 K6", rgb: "203 173 78" },
-              ],
-              labels: [
-                m("valhalla/gold-etiqueta-cabeza", "Etiqueta frontal de Valhalla Gold con la cabeza vikinga en dorado sobre negro.", "flat"),
-                m("valhalla/gold-etiqueta-barco", "Etiqueta frontal de Valhalla Gold con el drakkar en dorado sobre negro.", "flat"),
-                m("valhalla/gold-etiqueta-dorsal", "Etiqueta dorsal de Valhalla Gold en negro con cenefas doradas.", "flat"),
-              ],
-              cap: m("valhalla/gold-tapon", "Etiqueta de tapón de Valhalla Gold: nudo celta dorado sobre negro.", "flat"),
-              bottles: m("valhalla/gold-botellas", "Cuatro vistas 3D de la botella de Valhalla Gold.", "render"),
-              box: m("valhalla/gold-caja-3d", "Tres vistas 3D de la caja negra y dorada de Valhalla Gold.", "render"),
-              dieline: m("valhalla/gold-troquel", "Troquel desplegado de la caja de Valhalla Gold.", "flat"),
-              scene: m("valhalla/gold-ambiente", "Caja y botellas de Valhalla Gold sobre una mesa de madera en un bosque.", "ambient"),
-            },
-            {
-              id: "radler",
-              name: "Valhalla Radler",
-              tagline: "La de limón",
-              description: "Sabor a limón. Amarillo limón de fondo y negro para las ilustraciones.",
-              theme: { bg: "#F7EE8B", ink: "#000000", accent: "#000000" },
-              colors: [
-                { name: "Limón", hex: "#F7EE8B", cmyk: "C7 M0 Y57 K0", rgb: "247 238 139" },
-                { name: "Negro", hex: "#000000", cmyk: "C91 M79 Y62 K97", rgb: "0 0 0" },
-              ],
-              labels: [
-                m("valhalla/radler-etiqueta-cabeza", "Etiqueta frontal de Valhalla Radler con la cabeza vikinga en negro sobre amarillo limón.", "flat"),
-                m("valhalla/radler-etiqueta-barco", "Etiqueta frontal de Valhalla Radler con el drakkar en negro sobre amarillo limón.", "flat"),
-                m("valhalla/radler-etiqueta-dorsal", "Etiqueta dorsal de Valhalla Radler en amarillo con cenefas negras.", "flat"),
-              ],
-              cap: m("valhalla/radler-tapon", "Etiqueta de tapón de Valhalla Radler: nudo celta negro sobre amarillo.", "flat"),
-              bottles: m("valhalla/radler-botellas", "Cuatro vistas 3D de la botella de Valhalla Radler.", "render"),
-              box: m("valhalla/radler-caja-3d", "Tres vistas 3D de la caja amarilla de Valhalla Radler.", "render"),
-              dieline: m("valhalla/radler-troquel", "Troquel desplegado de la caja de Valhalla Radler.", "flat"),
-              scene: m("valhalla/radler-ambiente", "Un grupo de amigos en una barbacoa con la caja de Valhalla Radler en primer plano.", "ambient"),
-            },
-          ],
+          varieties: valhallaVarieties,
         },
       ],
       surface: "paper",
@@ -139,7 +151,7 @@ const valhalla: Project = {
         {
           type: "specimen",
           fonts: [
-            { name: "Njord Alternate", role: "Marca y nombres de variedad", sample: "VALHALLA" },
+            { name: "Njord Alternate", role: "Marca y nombres de variedad", family: "var(--font-njord)", sample: "VALHALLA · BEER · GOLD · RADLER" },
             { name: "Montserrat", role: "Información de producto · Light, Medium, SemiBold", family: "var(--font-montserrat)", weights: "300 500 600", sample: "Cerveza nórdica · 33 cl · 5% vol." },
           ],
           media: m("valhalla/tipografia", "Muestrario tipográfico de Valhalla: Njord Alternate y Montserrat en tres pesos.", "flat", { fit: "contain" }),
@@ -226,6 +238,8 @@ const cirquera: Project = {
   tagline: "Todo el circo en un solo lugar. Identidad visual para una plataforma digital del mundo circense.",
   summary: "Manual de identidad para una plataforma que conecta perfiles, oficios y disciplinas del circo: logotipo, color, ilustración, iconografía y piezas.",
   categories: ["identidad"],
+  group: "identidad",
+  label: "Identidad visual",
   disciplines: ["Identidad visual", "Manual de marca", "Ilustración", "Iconografía", "Piezas publicitarias"],
   year: null,
   context: "Proyecto académico en equipo · Escola del Treball de Barcelona · Marca ficticia",
@@ -233,10 +247,11 @@ const cirquera: Project = {
   role: null,
   team: [{ name: "Iván Ordóñez", me: true }, { name: "Oscar Garcia" }, { name: "Alex López" }, { name: "Sindri Faldmo" }],
   tools: [],
-  theme: { bg: "#37101C", ink: "#F6ECC9", accent: "#E53131", alt: "#F6ECC9", altInk: "#37101C", soft: "#F1E5BE", display: "var(--font-poppins)" },
+  theme: { bg: "#37101C", ink: "#F6ECC9", accent: "#E53131", alt: "#F6ECC9", altInk: "#37101C", soft: "#F1E5BE", display: "var(--font-aquavit)", brand: { family: "var(--font-aquavit)", weight: 800 } },
   inks: ["#37101C", "#E53131", "#F6ECC9"],
+  poster: m("cirquera/ilustracion-equilibrista", "Ilustración de Cirquera: un equilibrista con pértiga roja sobre la cuerda floja y carpas al fondo.", "flat"),
   cover: m("cirquera/columna-morris", "Columna publicitaria con el cartel vertical de Cirquera: una acróbata bajo un foco y el lema «Todo el circo, en un solo lugar».", "mockup"),
-  visual: { media: m("cirquera/columna-morris", "Columna publicitaria con el cartel vertical de Cirquera: una acróbata bajo un foco y el lema «Todo el circo, en un solo lugar».", "mockup"), mode: "object", layout: "behind", align: "center", scale: 0.92, shadow: "drop", fitEm: 4.95 },
+  visual: { media: m("cirquera/columna-morris", "Columna publicitaria con el cartel vertical de Cirquera: una acróbata bajo un foco y el lema «Todo el circo, en un solo lugar».", "mockup"), mode: "object", layout: "behind", align: "center", scale: 0.92, shadow: "drop", fitEm: 4.2 },
   sections: [
     {
       id: "encargo",
@@ -305,7 +320,7 @@ const cirquera: Project = {
         {
           type: "specimen",
           fonts: [
-            { name: "Aquavit", role: "Logotipo y títulos · Extrabold, Semibold. Formas orgánicas, contraste marcado y un eco de la cartelería clásica." },
+            { name: "Aquavit", role: "Logotipo y títulos · Extrabold, Semibold. Formas orgánicas, contraste marcado y un eco de la cartelería clásica.", family: "var(--font-aquavit)", sample: "Cirquera" },
             { name: "Poppins", role: "Textos · Regular, Medium, Semibold, Italic. Geométrica y cómoda en pantalla.", family: "var(--font-poppins)", weights: "400 500 600", sample: "Todo el circo en un solo lugar." },
           ],
           media: m("cirquera/tipografia", "Página del manual con las familias Aquavit y Poppins.", "manual", { fit: "contain" }),
@@ -406,16 +421,18 @@ const beStar: Project = {
   tagline: "Del plano al volumen. Identidad y packaging para Hydrastar, una crema hidratante facial natural.",
   summary: "Identidad y sistema de envase para una marca de cosmética natural: tarro, caja con ventana troquelada, camisa y acabados de impresión.",
   categories: ["packaging", "identidad"],
+  group: "destacados",
+  label: "Identidad y packaging",
   disciplines: ["Identidad visual", "Packaging", "Diseño estructural", "Acabados", "Visualización 3D"],
   year: null,
   context: "Proyecto académico · Escola del Treball de Barcelona · Diseño estructural de envase y embalaje",
   authorship: "individual",
   role: "Proyecto individual: identidad, diseño de etiqueta, caja y camisa, desarrollo estructural y visualización 3D.",
   tools: ["Adobe Illustrator", "Esko Studio", "Esko Studio Toolkit", "ArtiosCAD (vía Esko)"],
-  theme: { bg: "#E4E1DA", ink: "#22301A", accent: "#6A8157", alt: "#324425", altInk: "#EEEBE3", soft: "#D9D5CC", display: "var(--font-bricolage)" },
+  theme: { bg: "#E4E1DA", ink: "#22301A", accent: "#6A8157", alt: "#324425", altInk: "#EEEBE3", soft: "#D9D5CC", display: "var(--font-bricolage)", brand: { family: "var(--font-valentine)" } },
   inks: ["#324425", "#6A8157", "#EACF4B"],
   cover: m("be-star/gama-piedra", "Dos tarros de Hydrastar apilados, la caja verde abierta y un tercer tarro sobre una piedra, con luz natural.", "ambient"),
-  visual: { media: m("be-star/caja-y-tarro-render", "Render de la caja verde de Hydrastar abierta junto a un tarro de crema Be Star, con su reflejo.", "render"), mode: "object", layout: "behind", align: "right", valign: "bottom", scale: 0.74, titleColor: "#324425", fitEm: 3.95 },
+  visual: { media: m("be-star/caja-y-tarro-render", "Render de la caja verde de Hydrastar abierta junto a un tarro de crema Be Star, con su reflejo.", "render"), mode: "object", layout: "behind", align: "right", valign: "bottom", scale: 0.74, titleColor: "#324425", fitEm: 3.2 },
   sections: [
     {
       id: "encargo",
@@ -455,7 +472,7 @@ const beStar: Project = {
         {
           type: "specimen",
           fonts: [
-            { name: "Sparkling Valentine", role: "Solo para el nombre de la marca: una manuscrita que aporta cercanía y personalidad." },
+            { name: "Sparkling Valentine", role: "Solo para el nombre de la marca: una manuscrita que aporta cercanía y personalidad.", family: "var(--font-valentine)", sample: "Be Star" },
             { name: "Bricolage Grotesque", role: "Todo lo demás: información técnica limpia y legible.", family: "var(--font-bricolage)", weights: "400 600", sample: "Una fórmula ligera que hidrata y suaviza profundamente." },
           ],
           media: m("be-star/tipografia", "Muestrario tipográfico de Be Star: Sparkling Valentine y Bricolage Grotesque.", "flat", { fit: "contain" }),
@@ -583,16 +600,18 @@ const hotrace: Project = {
   tagline: "Una revista de Fórmula 1 con Fernando Alonso como protagonista. Maquetación de portada y cuatro dobles páginas.",
   summary: "Diseño editorial de una revista de motor: portada, jerarquía tipográfica, tratamiento de imagen y ritmo de lectura en cuatro dobles páginas.",
   categories: ["editorial"],
+  group: "editorial",
+  label: "Diseño editorial",
   disciplines: ["Diseño editorial", "Maquetación", "Tratamiento de imagen", "Mockups"],
   year: null,
   context: "Proyecto de diseño editorial",
   authorship: "individual",
   role: "Maquetación completa: organización del contenido, tipografía, tratamiento de las imágenes, composición y mockups.",
   tools: [],
-  theme: { bg: "#151A1D", ink: "#F1F1EE", accent: "#2FA88F", alt: "#0B5E50", altInk: "#F1F1EE", soft: "#E6E6E2", display: "var(--font-archivo)" },
+  theme: { bg: "#151A1D", ink: "#F1F1EE", accent: "#2FA88F", alt: "#0B5E50", altInk: "#F1F1EE", soft: "#E6E6E2", display: "var(--font-archivo)", brand: { family: "var(--font-bebas)", upper: true } },
   inks: ["#0B5E50", "#2B3A42", "#F1F1EE"],
   cover: m("hotrace/quiosco", "Una mano coge la revista HOTRACE del expositor de un quiosco, entre otras revistas de motor.", "mockup"),
-  visual: { media: m("hotrace/portada", "Portada de HOTRACE: Fernando Alonso con el mono de Aston Martin y el casco en la mano.", "flat"), mode: "object", layout: "behind", align: "left", tilt: -4, scale: 0.84, shadow: "paper", fitEm: 6.4 },
+  visual: { media: m("hotrace/portada", "Portada de HOTRACE: Fernando Alonso con el mono de Aston Martin y el casco en la mano.", "flat"), mode: "object", layout: "behind", align: "left", tilt: -4, scale: 0.84, shadow: "paper", fitEm: 2.82 },
   sections: [
     {
       id: "encargo",
@@ -610,12 +629,21 @@ const hotrace: Project = {
       blocks: [
         {
           type: "spreads",
+          folios: ["Portada", "Págs. 2–3", "Págs. 4–5", "Págs. 6–7", "Págs. 8–9"],
           items: [
             m("hotrace/portada", "Portada de HOTRACE con Fernando Alonso.", "flat"),
             m("hotrace/pliego-formula-1", "Páginas 2 y 3: «Fórmula 1», con fotografías de Alonso, columnas de texto y citas en verde.", "flat"),
             m("hotrace/pliego-temporada", "Páginas 4 y 5: la temporada 2023, con Alonso en el podio y un primer plano de su casco.", "flat"),
             m("hotrace/pliego-aston-martin", "Páginas 6 y 7: página verde con el emblema de Aston Martin y el reportaje sobre Dan Fallows.", "flat"),
             m("hotrace/pliego-fallows", "Páginas 8 y 9: retratos del equipo, el monoplaza AMR23 y una columna lateral destacada.", "flat"),
+          ],
+        },
+        {
+          type: "detail",
+          media: m("hotrace/pliego-formula-1", "Páginas 2 y 3 de HOTRACE: «Fórmula 1».", "flat"),
+          crops: [
+            { rect: [0.025, 0.035, 0.255, 0.5], caption: "Cabecera condensada, capitular y entrada de texto." },
+            { rect: [0.785, 0.03, 0.985, 0.4], caption: "Columna sobre la imagen y cita destacada en verde." },
           ],
         },
       ],
@@ -655,6 +683,8 @@ const herbLubalin: Project = {
   tagline: "Un fascículo editorial sobre el tipógrafo neoyorquino, contado con su propio lenguaje visual.",
   summary: "Fascículo dedicado a Herb Lubalin: retícula modular, jerarquía tipográfica marcada y una paleta reducida a rojo, negro y blanco.",
   categories: ["editorial"],
+  group: "editorial",
+  label: "Tipografía y diseño editorial",
   disciplines: ["Diseño editorial", "Tipografía", "Maquetación"],
   year: null,
   context: "Proyecto de diseño editorial",
@@ -683,8 +713,22 @@ const herbLubalin: Project = {
         "La combinación de textos, fotografías y ejemplos de sus tipografías hace la lectura clara sin perder carácter editorial.",
       ],
       blocks: [
-        { type: "media", layout: "full", items: [m("herb-lubalin/pliego-biografia", "Doble página «Biografía» y «Tipografías»: retrato de Lubalin, texto a tres columnas y una composición de sus alfabetos.", "flat")] },
-        { type: "media", layout: "full", items: [m("herb-lubalin/pliego-disenos", "Doble página «Dissenys editorials»: portadas, carteles y logotipos de Lubalin con fichas explicativas.", "flat")] },
+        {
+          type: "spreads",
+          folios: ["Biografía · Tipografías", "Dissenys editorials"],
+          items: [
+            m("herb-lubalin/pliego-biografia", "Doble página «Biografía» y «Tipografías»: retrato de Lubalin, texto a tres columnas y una composición de sus alfabetos.", "flat"),
+            m("herb-lubalin/pliego-disenos", "Doble página «Dissenys editorials»: portadas, carteles y logotipos de Lubalin con fichas explicativas.", "flat"),
+          ],
+        },
+        {
+          type: "detail",
+          media: m("herb-lubalin/pliego-biografia", "Doble página «Biografía» y «Tipografías».", "flat"),
+          crops: [
+            { rect: [0.055, 0.06, 0.36, 0.86], caption: "Cabecera «Biografía» sobre la banda roja y texto a una columna." },
+            { rect: [0.525, 0.11, 0.69, 0.66], caption: "Columna «Ecléctico y exuberante», con los destacados en rojo." },
+          ],
+        },
       ],
       surface: "paper",
     },
@@ -735,6 +779,8 @@ const indomita: Project = {
   tagline: "Manual de identidad corporativa para una agencia de viajes de aventura.",
   summary: "Identidad y manual corporativo, en catalán, para una agencia de viajes exóticos y de aventura: construcción, color, tipografía y variantes.",
   categories: ["identidad"],
+  group: "identidad",
+  label: "Identidad corporativa",
   disciplines: ["Identidad corporativa", "Manual de marca"],
   year: null,
   context: "Proyecto en equipo · Manual d'identitat corporatiu (en catalán)",
@@ -744,6 +790,7 @@ const indomita: Project = {
   tools: [],
   theme: { bg: "#345131", ink: "#FFFFFF", accent: "#C6C6C5", alt: "#F1F2EE", altInk: "#24391F", soft: "#E8EAE4", display: "var(--font-poppins)" },
   inks: ["#345131", "#C6C6C5", "#575756"],
+  poster: m("indomita/portada-manual", "Portada del manual de identidad de Indómita: el logotipo en blanco sobre verde.", "manual"),
   cover: m("indomita/variante-fotografia", "Logotipo de Indómita en blanco sobre la fotografía aérea de una casa en un árbol en plena selva.", "manual"),
   visual: { media: m("indomita/variante-fotografia", "Logotipo de Indómita en blanco sobre la fotografía aérea de una casa en un árbol en plena selva.", "manual"), mode: "photo", layout: "masthead", focus: "50% 48%", fitEm: 4.92 },
   sections: [
@@ -754,6 +801,9 @@ const indomita: Project = {
       lead: "Indómita planifica y gestiona viajes exóticos y de aventura para clientes que buscan experiencias vitales y extremas.",
       body: [
         "Viajes a medida —del deporte extremo a la escapada romántica— diseñados desde Barcelona con expertos locales, con la idea de un turismo innovador, responsable y comprometido. El manual, en catalán, fija las normas para aplicar la marca con coherencia.",
+      ],
+      blocks: [
+        { type: "media", layout: "full", items: [m("indomita/portada-manual", "Portada del Manual d'identitat corporatiu de Indómita: el logotipo en blanco sobre verde, con los nombres de Sindri Faldmo, Iván Ordóñez y Anely Silva.", "manual")] },
       ],
       surface: "project",
     },
@@ -796,6 +846,7 @@ const indomita: Project = {
         },
         {
           type: "specimen",
+          media: m("indomita/tipografia-principal", "Página del manual con la familia corporativa RL Aqva Black: mayúsculas, minúsculas, números y signos.", "manual", { fit: "contain", ground: "#2B4429" }),
           fonts: [
             { name: "RL Aqva", role: "Familia corporativa principal" },
             { name: "Alfarn 2", role: "Títulos en aplicaciones" },
@@ -835,7 +886,7 @@ const indomita: Project = {
         {
           type: "dodont",
           items: [
-            { media: m("indomita/variante-apilada-verde", "Uso correcto: logotipo apilado en blanco sobre verde.", "manual"), label: "Correcto", ok: true },
+            { media: m("indomita/variante-apilada-verde", "Uso correcto: logotipo apilado en blanco sobre verde.", "manual"), label: "Apilado, en blanco sobre verde", ok: true },
             { media: m("indomita/incorrecto-color-negro", "Uso incorrecto: logotipo en rojo sobre negro.", "manual"), label: "Colores no corporativos", ok: false },
             { media: m("indomita/incorrecto-color-verde", "Uso incorrecto: logotipo en rosa sobre verde lima.", "manual"), label: "Colores no corporativos", ok: false },
             { media: m("indomita/incorrecto-simbolo-girado", "Uso incorrecto: el símbolo girado respecto al texto.", "manual"), label: "Símbolo girado", ok: false },
@@ -867,7 +918,15 @@ const indomita: Project = {
   published: true,
 };
 
-export const projects: Project[] = [valhalla, cirquera, beStar, hotrace, herbLubalin, indomita];
+/** Order = hierarchy: featured packaging projects, then identity, then editorial. Every number on the site derives from it. */
+export const projects: Project[] = [valhalla, beStar, cirquera, indomita, hotrace, herbLubalin];
+
+/** The exhibition is grouped; each project belongs to exactly one group (2 + 2 + 2). */
+export const groups: { id: Project["group"]; title: string; note: string }[] = [
+  { id: "destacados", title: "Destacados", note: "Identidad y packaging" },
+  { id: "identidad", title: "Identidad", note: "Sistemas de marca y manuales" },
+  { id: "editorial", title: "Editorial", note: "Revista y fascículo" },
+];
 
 /**
  * Named in the brief, but no source material was supplied yet.
@@ -879,6 +938,9 @@ export const draftProjects: DraftProject[] = [
 ];
 
 export const getProject = (slug: string) => projects.find((p) => p.slug === slug);
+
+/** "01"–"06": the project's number everywhere (exhibition, menu, feature, next project). */
+export const projectNumber = (p: Project) => String(projects.indexOf(p) + 1).padStart(2, "0");
 
 export const nextProject = (slug: string) => {
   const i = projects.findIndex((p) => p.slug === slug);

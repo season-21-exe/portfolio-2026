@@ -1,6 +1,7 @@
 import type { Project } from "@/data/types";
 import { tx, type Locale } from "@/lib/i18n";
 import { Picture, getAsset } from "@/components/ui/Picture";
+import { titleFace } from "@/lib/titleFace";
 
 /**
  * A project's sheet in miniature — same composition as ProjectCover (title
@@ -13,14 +14,15 @@ export function MiniCover({ p, sizes = "40vw", priority = false, withAlt = false
   const v = p.visual;
   const a = getAsset(v.media.key);
   const titleColor = v.titleColor ?? p.theme.ink;
-  const font = { fontFamily: p.theme.display ?? "var(--font-archivo)", fontVariationSettings: '"wdth" 125', color: titleColor } as const;
+  const face = titleFace(p);
+  const font = { ...face.style, color: titleColor };
   const alt = withAlt ? tx(v.media.alt, locale) : "";
 
   if (v.layout === "masthead") {
     const size = `calc(90cqw / ${v.fitEm})`;
     return (
       <span className="absolute inset-0 block overflow-hidden [container-type:size]" style={{ background: p.theme.bg }}>
-        <span aria-hidden className="absolute left-[5cqw] right-[5cqw] top-[6cqh] block font-black uppercase leading-[0.84] tracking-[-0.035em]" style={{ ...font, fontSize: size }}>
+        <span aria-hidden className={`absolute left-[5cqw] right-[5cqw] top-[6cqh] block leading-[0.84] ${face.className}`} style={{ ...font, fontSize: size }}>
           {p.title}
         </span>
         <span className="absolute inset-x-0 bottom-0 block" style={{ top: `calc(6cqh + ${size} * 0.9 + 4cqh)` }}>
@@ -35,7 +37,7 @@ export function MiniCover({ p, sizes = "40vw", priority = false, withAlt = false
     <span className="absolute inset-0 block overflow-hidden [container-type:size]" style={{ background: p.theme.bg }}>
       <span
         aria-hidden
-        className="absolute inset-x-[4cqw] top-1/2 block -translate-y-1/2 text-center font-black uppercase leading-[0.84] tracking-[-0.035em] [text-wrap:balance]"
+        className={`absolute inset-x-[4cqw] top-1/2 block -translate-y-1/2 text-center leading-[0.84] ${face.className} [text-wrap:balance]`}
         style={{ ...font, fontSize: `min(calc(92cqw / ${v.fitEm}), 30cqh)` }}
       >
         {p.title}

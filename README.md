@@ -2,7 +2,7 @@
 
 Personal portfolio of **Iván Ordóñez García**, graphic designer (identity, packaging, editorial). Spanish first, with English-ready content architecture.
 
-Next.js 16 (App Router, static export) · React 19 · TypeScript · Tailwind CSS 4 · GSAP 3 (ScrollTrigger, Flip).
+Next.js 16 (App Router, static export) · React 19 · TypeScript · Tailwind CSS 4 · GSAP 3. Type: Archivo (variable width: expanded, normal, condensed) + IBM Plex Mono for labels and numbers.
 
 ## Run it
 
@@ -60,12 +60,15 @@ The asset scripts use `sharp` and `mupdf` (AGPL) as **local dev tools only**; ne
 2. Add its images to `scripts/asset-sources.mjs` and run `npm run assets:build`.
 3. Append a `Project` object to `projects` in `src/data/projects.ts`. Copy an existing one, then set:
    - `theme`: the project's inks and typeface;
-   - `visual`: the **key visual**, the single image that represents the project on its sheet in the pile, in the hero proof and in the case-study opening;
+   - `group` (`destacados`, `identidad` or `editorial`): the group named on its sheet in the pile. Its number (01–06) is its position in `projects`, which is also its place in the pile;
+   - `label`: the short discipline line shown on its sheet ("Identidad visual");
+   - `visual`: the **key visual**, the single image that represents the project on its sheet in the pile and in the case-study opening;
+   - `poster` (optional): the photograph for the home cover story, when it should differ from `cover`;
    - `sections`.
 
    For the key visual, choose `layout: "behind"` (title behind a cut-out or printed piece) or `"masthead"` (title over a bleed photograph). Set `fitEm` to the width of the title's longest word in em, in the project's own typeface, so the title fills the sheet edge to edge: measure it in the browser, or start at about 0.9 × the number of letters and adjust.
 
-   The route `/projects/<slug>/`, the sheet in the pile, the menu entry, the control-strip patch, the "next project" sheet and the sitemap are all generated from it.
+   The route `/projects/<slug>/`, its sheet in the pile, its slot in the cover story, the index entry, the "next project" sheet and the sitemap are all generated from it.
 
 `draftProjects` holds **La Torcida** and **DYNA Creative Lab**, which are waiting for their material. They are never rendered.
 
@@ -83,15 +86,15 @@ The content is typed for translation: every text field is a `T` (`string` = Span
 src/
   app/                  layout (fonts, metadata), home, projects/[slug], sitemap, robots, icon
   components/
-    home/               Hero, Marquee, ProjectIndex (the pile / list / filters), About, ContactSection (tear-off tabs)
-    project/            ProjectCover (a project's sheet: index / case opening / next), MiniCover (the same sheet in miniature)
-    case/               CaseStudy, Blocks, Figure, Palette, Varieties, Spreads, Compare, Words, RunningHead
-    layout/             Header (+ index menu), Footer, Slug
-    motion/             PageTransition (TransitionLink with transition types), PageSheet (page-level view transition), Reveal
-    print/              CropMarks, RegMark, TornEdge
+    home/               Hero (the cover), ProjectIndex (the pile: one full sheet per project, stacked as you scroll), About (profile + data sheet), ContactSection (the back cover)
+    project/            ProjectCover (a project's sheet: in the pile, as a case study's opening, as the "next project"), MiniCover (index preview)
+    case/               CaseStudy, Blocks (incl. family matrix + detail crops), Figure, Loupe (full-resolution viewer), Spreads, Varieties, Palette, Compare, Words
+    layout/             Header (sticky bar that takes the inks of the sheet under it, position indicator, index overlay), Footer (colophon)
+    motion/             PageTransition (TransitionLink + transition types), PageSheet (page-level view transition), Reveal (ImageReveal)
+    print/              RegMark
     ui/                 Picture (AVIF/WebP, explicit size, placeholder)
   config/site.ts        personal data
-  data/                 projects.ts, types.ts, assets.generated.json
+  data/                 projects.ts (+ groups, projectNumber), types.ts, assets.generated.json
   i18n/ui.ts            interface strings
   lib/                  gsap, i18n, color
 scripts/                asset extraction / optimisation / inventory / post-build
@@ -99,17 +102,23 @@ docs/                   audit, analysis, inventory, credits, items to confirm, c
 source-material/        original PDFs and images (never modified)
 ```
 
+## Numbering
+
+There is one source for every number on the site: a project's position in `projects` (`projectNumber(p)` → "01"–"06"). The pile, the cover's index, the header, the index overlay, the About links and the case studies all read it. Inside a case study, chapters are numbered under the project (`02.1`, `02.2`…), so no counter can be mistaken for another project.
+
 ## Page transitions
 
 Navigation uses native view transitions (React `<ViewTransition>` with `<Link transitionTypes>`). No library is involved, and browsers without support simply navigate.
-- **Forward links** (`TransitionLink`, default `direction="forward"`) tag the navigation `nav-forward`. A project's sheet, title and key visual share names (`vt-sheet-*`, `vt-title-*`, `vt-visual-*`), so a sheet that is on screen when clicked morphs into the case-study opening.
+- **Forward links** (`TransitionLink`, default `direction="forward"`) tag the navigation `nav-forward`. A project's sheet, title and key visual share names (`vt-sheet-*`, `vt-title-*`, `vt-visual-*`), so the sheet that is on screen when clicked morphs into the case-study opening, and the link back (`/#p-<slug>`) lands on the same sheet. Photographs that change crop between sheet and page morph as filled frames (`.morph-photo`).
 - **Back links** use `direction="back"`.
 - **Page motion** comes from `PageSheet`, because React leaves the document root static. The CSS lives at the end of `globals.css`.
-- React only pairs shared elements that are **visible** at the moment of the click. That's why an off-screen sheet (for example from the hero proof or the menu) gets the "laid on top" page transition instead of the morph.
+- React only pairs shared elements that are **visible** at the moment of the click. That's why a link to a project that isn't on screen (the cover story, the index overlay) gets the page transition instead of the morph.
 
 ## Quality notes
 
-- Accessibility: semantic landmarks and heading order, skip link, visible focus (signal-red ring), keyboard tabs on the Valhalla switcher (arrow keys / Home / End), range input for the comparison slider, an inert background behind the menu, Esc to close, and text-contrast checks on every theme.
-- `prefers-reduced-motion` turns off every non-essential animation; all content stays visible.
+- Accessibility: semantic landmarks and heading order, skip link, visible focus, a sticky bar that names the current section or project, keyboard tabs on the Valhalla switcher (arrow keys / Home / End), a range input for the comparison slider, an inert background behind the index, Esc to close; the spread viewer is a native modal `<dialog>` (focus moves to *Cerrar*, Esc closes, focus returns to the spread).
+- `prefers-reduced-motion` turns off every non-essential animation (entrances, cover cycling, reveals, plate, morphs); all content stays visible.
 - Every image has explicit dimensions and a placeholder: no layout shift.
-- QA done on the production build at 390, 768, 1024, 1440 and 1920 px: no horizontal overflow, all internal links return 200, 60 fps while scrolling.
+- Display type is fitted to its container with container-query units (`cqi`), so it fills the measure exactly on any screen, including Windows with classic scrollbars.
+- QA on the production build at 390, 768, 1024, 1440 and 1920 px: no horizontal overflow on any route, every internal link and anchor resolves, every image file exists, no console errors.
+

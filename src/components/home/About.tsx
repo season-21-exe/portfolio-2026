@@ -1,139 +1,127 @@
 import { site } from "@/config/site";
-import { projects } from "@/data/projects";
+import { projectNumber, projects } from "@/data/projects";
 import { tx, type Locale } from "@/lib/i18n";
 import { Picture } from "@/components/ui/Picture";
 import { TransitionLink } from "@/components/motion/PageTransition";
 import { ImageReveal } from "@/components/motion/Reveal";
-import { Slug } from "@/components/layout/Slug";
 
 /**
- * "Quién soy" keeps the device from Iván's own PDF portfolio: the word set
- * once solid and echoed in outline, the red-toned polaroid taped to the sheet.
+ * SOBRE MÍ — the profile, printed on the charcoal sheet: the red-toned
+ * polaroid, the introduction, one line of Iván's own words set large, and a
+ * data sheet (education, experience, disciplines linked to the projects that
+ * show them, software). Only documented facts — see config/site.ts.
  */
 export function About({ locale = "es" }: { locale?: Locale }) {
-  const titleOf = (slug: string) => projects.find((p) => p.slug === slug);
+  const bySlug = (slug: string) => projects.find((p) => p.slug === slug);
   return (
-    <section id="sobre-mi" aria-labelledby="sobre-mi-title" className="surface-paper relative pad-x pb-[12vh] pt-[16vh]">
-      <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-6">
-        {/* polaroid */}
+    <section id="sobre-mi" data-nav-section="sobre-mi" aria-labelledby="sobre-mi-title" className="surface-ink relative pad-x section-y">
+      <header className="rule-b mb-12 flex flex-wrap items-end justify-between gap-x-10 gap-y-3 pb-5 md:mb-20">
+        <h2 id="sobre-mi-title" className="t-display t-section-title">
+          Sobre mí
+        </h2>
+        <p className="t-label text-grey-light">
+          {tx(site.title, locale)} · {tx(site.location, locale)}
+        </p>
+      </header>
+
+      <div className="grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-12">
+        {/* Portrait */}
         <div className="md:col-span-5 lg:col-span-4">
-          <div className="md:sticky md:top-[calc(var(--header-h)+2rem)]">
-            <ImageReveal className="mx-auto w-[78%] max-w-[420px] -rotate-[4deg] md:w-full">
-              <Picture k="personal/retrato-polaroid" alt="Retrato de Iván Ordóñez en una polaroid con tratamiento rojo, sujeta con cinta adhesiva." sizes="(min-width: 768px) 32vw, 78vw" placeholder={false} />
+          <figure className="md:sticky md:top-[calc(var(--header-h)+2.5rem)]">
+            <ImageReveal className="mx-auto w-[80%] max-w-[460px] -rotate-[3deg] md:mx-0 md:w-[92%]">
+              <Picture k="personal/retrato-polaroid" alt="Retrato de Iván Ordóñez en una polaroid con tratamiento rojo, sujeta con cinta adhesiva." sizes="(min-width: 768px) 34vw, 80vw" placeholder={false} />
             </ImageReveal>
-          </div>
+            <figcaption className="t-label mt-8 text-grey-light">{site.name}</figcaption>
+          </figure>
         </div>
 
-        <div className="md:col-span-7 lg:col-span-7 lg:col-start-6">
-          <h2 id="sobre-mi-title" className="t-display mb-10 text-[clamp(3.2rem,9vw,8.5rem)]" aria-label="Quién soy">
-            <span aria-hidden className="block">Quién</span>
-            <span aria-hidden className="block text-transparent [-webkit-text-stroke:1.5px_var(--color-signal)]">Quién</span>
-            <span aria-hidden className="block -mt-[0.1em]">soy</span>
-          </h2>
+        {/* Introduction + data sheet */}
+        <div className="md:col-span-7 lg:col-start-6">
+          <p className="t-lead !text-[clamp(1.4rem,1rem+1.3vw,2.4rem)] max-w-[30ch]">{tx(site.bio[0], locale)}</p>
 
-          <div className="space-y-5">
-            <p className="t-lead max-w-[34ch]">{tx(site.bio[0], locale)}</p>
+          {/* Pull line — his own words from the third paragraph, set as type. */}
+          <p aria-hidden className="t-cond my-14 border-l-2 border-signal pl-5 text-[clamp(2.1rem,4.6vw,4.6rem)] md:my-20 md:pl-7">
+            Composiciones con carácter: propuestas que transmiten <span className="text-signal">personalidad y fuerza.</span>
+          </p>
+
+          <div className="grid grid-cols-1 gap-x-8 gap-y-4 text-paper/80 lg:grid-cols-2">
             {site.bio.slice(1).map((b, i) => (
-              <p key={i} className="t-body text-carbon/85">
+              <p key={i} className="t-body">
                 {tx(b, locale)}
               </p>
             ))}
           </div>
 
-          <dl className="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 border-t border-carbon pt-6 sm:grid-cols-2">
-            <div>
-              <dt className="t-slug mb-3 text-grey-ink">Formación</dt>
+          <dl className="mt-16 md:mt-24">
+            <Row label="Formación">
               {site.education.map((e) => (
-                <dd key={e.period} className="space-y-1">
-                  <p className="t-slug tabular-nums">{e.period}</p>
-                  <p className="t-meta">{tx(e.title, locale)}</p>
-                  <p className="text-[0.95rem] text-grey-ink">{e.place}</p>
-                </dd>
+                <Entry key={e.period} period={e.period} title={tx(e.title, locale)} place={e.place} />
               ))}
-            </div>
-            <div>
-              <dt className="t-slug mb-3 text-grey-ink">Experiencia</dt>
+            </Row>
+            <Row label="Experiencia">
               {site.experience.map((e) => (
-                <dd key={e.period} className="space-y-1">
-                  <p className="t-slug tabular-nums">{e.period}</p>
-                  <p className="t-meta">
-                    {tx(e.title, locale)} · {e.place}
-                  </p>
-                  <ul className="mt-1 space-y-0.5 text-[0.95rem] text-grey-ink">
+                <Entry key={e.period} period={e.period} title={tx(e.title, locale)} place={e.place}>
+                  <ul className="mt-2 space-y-0.5 text-[0.95rem] text-paper/70">
                     {e.tasks.map((task, i) => (
                       <li key={i}>{tx(task, locale)}</li>
                     ))}
                   </ul>
-                </dd>
+                </Entry>
               ))}
-            </div>
-          </dl>
-
-          {/* Capabilities — a spec sheet, not a skills bar chart */}
-          <div className="mt-16">
-            <h3 className="t-headline mb-6 text-[clamp(1.8rem,3.2vw,2.8rem)]">Lo que hago</h3>
-            <table className="w-full border-collapse text-left">
-              <caption className="sr-only">Disciplinas que demuestran los proyectos</caption>
-              <thead>
-                <tr className="t-slug border-b border-carbon text-grey-ink">
-                  <th scope="col" className="py-2 pr-4 text-left font-medium">Disciplina</th>
-                  <th scope="col" className="py-2 text-right font-medium">Dónde se ve</th>
-                </tr>
-              </thead>
-              <tbody>
+            </Row>
+            <Row label="Disciplinas">
+              <ul className="divide-y divide-paper/10">
                 {site.skills.disciplines.map((d) => (
-                  <tr key={tx(d.name, locale)} className="border-b border-carbon/20 align-middle">
-                    <th scope="row" className="py-4 pr-6 text-left text-[clamp(1.05rem,0.9rem+0.5vw,1.35rem)] font-semibold leading-tight" style={{ fontVariationSettings: '"wdth" 110' }}>
-                      {tx(d.name, locale)}
-                    </th>
-                    <td className="py-4">
-                      <span className="flex flex-wrap justify-end gap-1.5">
-                        {d.projects.map((slug) => {
-                          const p = titleOf(slug);
-                          return p ? (
-                            <TransitionLink
-                              key={slug}
-                              href={`/projects/${slug}/`}
-                              className="t-slug group inline-flex items-center gap-2 bg-carbon py-1 pl-1 pr-2.5 text-paper transition-colors hover:bg-signal hover:text-carbon"
-                            >
-                              <span aria-hidden className="flex h-4">
-                                {p.inks.map((c) => (
-                                  <span key={c} className="block h-4 w-2.5" style={{ background: c }} />
-                                ))}
-                              </span>
-                              {p.title}
-                            </TransitionLink>
-                          ) : null;
-                        })}
-                      </span>
-                    </td>
-                  </tr>
+                  <li key={tx(d.name, locale)} className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0 lg:flex-row lg:items-baseline lg:justify-between lg:gap-6">
+                    <span className="font-semibold">{tx(d.name, locale)}</span>
+                    <span className="flex flex-wrap gap-x-4 gap-y-1">
+                      {d.projects
+                        .map(bySlug)
+                        .filter((p): p is NonNullable<typeof p> => Boolean(p))
+                        .sort((a, b) => projects.indexOf(a) - projects.indexOf(b))
+                        .map((p) => (
+                          <TransitionLink key={p.slug} href={`/projects/${p.slug}/`} className="t-label inline-flex items-baseline gap-1.5 text-grey-light transition-colors hover:text-paper focus-visible:text-paper">
+                            <span className="text-signal">{projectNumber(p)}</span>
+                            <span className="link-ink">{p.title}</span>
+                          </TransitionLink>
+                        ))}
+                    </span>
+                  </li>
                 ))}
-              </tbody>
-            </table>
-
-            <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2">
-              <div>
-                <h4 className="t-slug mb-3 text-grey-ink">Software</h4>
-                <ul className="t-meta space-y-1">
-                  {site.skills.software.map((s) => (
-                    <li key={s}>{s}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="t-slug mb-3 text-grey-ink">Me interesa</h4>
-                <ul className="t-meta space-y-1">
-                  {site.skills.interests.map((s) => (
-                    <li key={tx(s, locale)}>{tx(s, locale)}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
+              </ul>
+            </Row>
+            <Row label="Software">
+              <ul className="grid grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
+                {site.skills.software.map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ul>
+            </Row>
+          </dl>
         </div>
       </div>
-      <Slug folio="3" className="mt-20 text-grey-ink" />
     </section>
+  );
+}
+
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="rule-t grid grid-cols-1 gap-x-6 gap-y-3 py-5 sm:grid-cols-[9.5rem_1fr]">
+      <dt className="t-label pt-1 text-grey-light">{label}</dt>
+      <dd className="space-y-4">{children}</dd>
+    </div>
+  );
+}
+
+function Entry({ period, title, place, children }: { period: string; title: string; place: string; children?: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-[7.5rem_1fr]">
+      <span className="t-label pt-1 text-signal">{period}</span>
+      <div>
+        <p className="font-semibold">{title}</p>
+        <p className="text-paper/70">{place}</p>
+        {children}
+      </div>
+    </div>
   );
 }

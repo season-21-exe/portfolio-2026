@@ -19,7 +19,8 @@ export type ImageKind =
   | "ambient" // presentation scene; origin to confirm (possible AI) — see docs/CONTENT_TO_CONFIRM.md
   | "ai" // confirmed AI-generated image
   | "reference" // third-party work (references, other authors)
-  | "art-direction"; // example photo used to define photographic direction
+  | "art-direction" // example photo used to define photographic direction
+  | "detail"; // enlarged crop of one of the artworks above (same pixels, closer)
 
 export interface Media {
   key: AssetKey;
@@ -58,11 +59,15 @@ export type Block =
   | { type: "facts"; items: { label: T; value: T }[] }
   | { type: "quote"; text: T; cite?: T }
   | { type: "dodont"; items: { media: Media; label: T; ok: boolean }[] }
-  | { type: "spreads"; items: Media[] }
+  | { type: "spreads"; items: Media[]; folios?: T[] }
   | { type: "varieties"; varieties: Variety[] }
   | { type: "words"; words: string[] }
   | { type: "compare"; before: Media; after: Media; beforeLabel: T; afterLabel: T }
-  | { type: "annotated"; media: Media; notes: { title: T; body: T }[] };
+  | { type: "annotated"; media: Media; notes: { title: T; body: T }[] }
+  /** The whole family at a glance: one row per variant, one column per piece. */
+  | { type: "matrix"; columns: T[]; rows: { label: T; ground?: string; ink?: string; items: Media[] }[]; note?: T }
+  /** Detail crops: the artwork small, and enlarged regions of it (normalised [x0, y0, x1, y1]). */
+  | { type: "detail"; media: Media; crops: { rect: [number, number, number, number]; caption?: T }[] };
 
 export interface Variety {
   id: string;
@@ -106,6 +111,12 @@ export interface ProjectTheme {
   soft: string;
   /** CSS font-family for project headings (the project's own documented type, if web-available) */
   display?: string;
+  /**
+   * The brand face, used only for the project's name (its sheet, the case
+   * opening, the menu preview) — set as the brand sets it: `upper` for a
+   * capitals logotype, `weight` when the family has several.
+   */
+  brand?: { family: string; upper?: boolean; weight?: number };
 }
 
 export interface TeamMember {
@@ -122,6 +133,10 @@ export interface Project {
   /** Card copy on the home index (≤ 160 characters). */
   summary: T;
   categories: Category[];
+  /** Exhibition group, exclusive, so counts always add up to the number of projects. */
+  group: "destacados" | "identidad" | "editorial";
+  /** Discipline label shown with the title, e.g. "Identidad y packaging". */
+  label: T;
   disciplines: T[];
   /** Only if documented. */
   year: string | null;
@@ -136,6 +151,8 @@ export interface Project {
   inks: string[];
   /** Social-card image (public/og/<slug>.jpg is cropped from it, see scripts/asset-sources.mjs → OG) and its alt text. */
   cover: Media;
+  /** Photograph for the home cover story, when it should differ from `cover` (which also feeds the social card). */
+  poster?: Media;
   /** The one image that stands for the project everywhere it is "printed". */
   visual: KeyVisual;
   sections: Section[];
@@ -170,6 +187,8 @@ export interface KeyVisual {
   titleColor?: string;
   /** object-position for photo crops. */
   focus?: string;
+  /** object-position when the visual fills a pile sheet as its faint backdrop (defaults to `focus`). */
+  backdropFocus?: string;
   /** Width of the title's longest word in em, measured in the project's display face (fits the title to the measure). */
   fitEm: number;
 }

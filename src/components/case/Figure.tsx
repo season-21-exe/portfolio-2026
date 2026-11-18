@@ -35,7 +35,7 @@ export function Figure({
   const contain = media.fit === "contain";
   const frame = (
     <div
-      className={`relative overflow-hidden ${contain ? "p-[clamp(0.75rem,3vw,2.5rem)]" : ""} ${frameClassName}`}
+      className={`relative overflow-hidden ${contain ? "p-[clamp(0.5rem,2vw,1.75rem)]" : ""} ${frameClassName}`}
       style={{ background: contain ? media.ground ?? "var(--p-soft, var(--color-paper-2))" : undefined, aspectRatio: ratio }}
     >
       <Picture
@@ -53,9 +53,9 @@ export function Figure({
   return (
     <figure className={className}>
       {reveal && !priority ? <ImageReveal>{frame}</ImageReveal> : frame}
-      <figcaption className={`t-slug mt-2.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 ${captionClassName}`}>
-        <span className="opacity-60">{t.imageKinds[media.kind]}</span>
-        {media.caption ? <span className="opacity-90">{tx(media.caption, locale)}</span> : null}
+      <figcaption className={`mt-2.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 ${captionClassName}`}>
+        <span className="t-label opacity-60">{t.imageKinds[media.kind]}</span>
+        {media.caption ? <span className="text-[0.85rem] leading-snug opacity-90">{tx(media.caption, locale)}</span> : null}
       </figcaption>
     </figure>
   );

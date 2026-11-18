@@ -19,7 +19,7 @@ export function Compare({ before, after, beforeLabel, afterLabel, locale = "es" 
           <Picture k={before.key} alt={tx(before.alt, locale)} sizes="(min-width:1024px) 70vw, 100vw" className="absolute inset-0 block h-full w-full" imgClassName="h-full w-full" />
         </div>
         <div aria-hidden className="pointer-events-none absolute inset-y-0 w-[2px] bg-[var(--p-accent,#ff3d17)]" style={{ left: `${pos}%` }}>
-          <span className="absolute left-1/2 top-1/2 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[var(--p-accent,#ff3d17)] text-white">⇆</span>
+          <span className="absolute left-1/2 top-1/2 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center bg-[var(--p-accent,#ff3d17)] text-white">⇆</span>
         </div>
         <span className="t-slug absolute left-3 top-3 bg-black/70 px-2 py-1 text-white">✕ {beforeLabel}</span>
         <span className="t-slug absolute right-3 top-3 bg-black/70 px-2 py-1 text-white">✓ {afterLabel}</span>

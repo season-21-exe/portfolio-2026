@@ -19,18 +19,10 @@ export const site = {
   location: "Barcelona" as T,
   disciplines: ["Identidad", "Packaging", "Editorial"] as T[],
 
-  /** Hero statement — derived from the three disciplines the projects actually show. */
-  statement: "Diseño marcas que se reconocen, envases que se abren y páginas que se leen." as T,
-  /** The same statement, split so each clause opens the index on its discipline. */
-  statementParts: [
-    { text: "Diseño " as T },
-    { text: "marcas que se reconocen" as T, filter: "identidad" },
-    { text: ", " as T },
-    { text: "envases que se abren" as T, filter: "packaging" },
-    { text: " y " as T },
-    { text: "páginas que se leen" as T, filter: "editorial" },
-    { text: "." as T },
-  ] as { text: T; filter?: "identidad" | "packaging" | "editorial" }[],
+  /** Edition line on the cover. */
+  edition: "Portfolio 2026" as T,
+  /** Hero statement: what the work is, in one line. */
+  statement: "Diseño identidades visuales, packaging y publicaciones con carácter." as T,
 
   /** Meta description (≈155 characters). */
   description:
@@ -90,8 +82,6 @@ export const site = {
     behance: null as null | { handle: string; url: string },
   },
 
-  /** InDesign-style slug line shown in section margins. */
-  slugFile: "ivan-ordonez_portfolio-2026.indd",
 } as const;
 
 export type Site = typeof site;

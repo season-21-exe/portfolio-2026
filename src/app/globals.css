@@ -1,32 +1,44 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────────────────────────────
-   PRUEBA DE IMPRENTA — design tokens
-   One family (Archivo, variable) at three widths:
-   expanded black = display · normal = text · condensed = slug/meta.
+   EDICIÓN 2026 — design tokens
+   The portfolio is set like a publication: a cover, an exhibition of work,
+   features (case studies) and a back page.
+
+   Type — two families, three voices:
+     Archivo (variable width + weight)
+       · expanded black ........ display: the name, project titles
+       · condensed black ....... headings: profession, groups, chapters
+       · text width ............ reading
+     IBM Plex Mono ............. technical labels, numbers, metadata
+   Colour — charcoal, warm paper, greys, one controlled orange-red.
    ────────────────────────────────────────────────────────────────────────── */
 @theme {
-  --color-carbon: #1a1918;
-  --color-carbon-2: #252422;
-  --color-paper: #e8e7e2;
-  --color-paper-2: #dddbd5;
-  --color-grey: #8b8984;
-  --color-grey-ink: #5c5a56; /* secondary text on paper (5.4:1) */
-  --color-grey-light: #a8a6a0; /* secondary text on carbon (7:1) */
-  --color-signal: #ff3d17; /* the red plate */
-  --color-signal-deep: #c9280a; /* signal for text on paper (AA large) */
+  --color-carbon: #151413;
+  --color-carbon-2: #22201e;
+  --color-paper: #ecebe5;
+  --color-paper-2: #dfddd5;
+  --color-grey: #8a877f;
+  --color-grey-ink: #5a5751; /* secondary text on paper (≥5:1) */
+  --color-grey-light: #a9a69e; /* secondary text on carbon (≥7:1) */
+  --color-rule: rgba(21, 20, 19, 0.16);
+  --color-signal: #ff4317; /* orange-red: interaction, emphasis, key details */
+  --color-signal-deep: #c4300c; /* signal for text on paper */
 
   --font-sans: var(--font-archivo), "Arial", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
 
   --ease-print: cubic-bezier(0.7, 0, 0.2, 1);
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Element defaults live in the base layer so Tailwind utilities (hidden, block…) can override them. */
+/* Element defaults live in the base layer so Tailwind utilities can override them. */
 @layer base {
   :root {
     --gutter: clamp(1rem, 2.6vw, 2.5rem);
-    --header-h: 4.25rem;
+    --header-h: 3.5rem;
+    --scroll-pad: calc(var(--header-h) + 1.5rem);
+    --section-y: clamp(5rem, 13vh, 10rem);
     color-scheme: light;
   }
 
@@ -34,7 +46,7 @@
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    scroll-padding-top: calc(var(--header-h) + 1rem);
+    scroll-padding-top: var(--scroll-pad);
   }
   @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }
@@ -63,42 +75,68 @@
 
 /* ── Type roles ──────────────────────────────────────────────────────────── */
 @layer components {
+  /* Display: expanded black capitals — the name, project titles. */
   .t-display {
     font-weight: 900;
     font-variation-settings: "wdth" 125;
     text-transform: uppercase;
-    letter-spacing: -0.035em;
-    line-height: 0.84;
+    letter-spacing: -0.04em;
+    line-height: 0.86;
   }
+  /* Condensed heading: tall, tight, poster-like. */
+  /* Section titles (Trabajo, Sobre mí): the full measure on phones, half of it from md. */
+  .t-section-title { font-size: calc((100vw - 2 * var(--gutter)) / 6.4); }
+  @media (min-width: 768px) {
+    .t-section-title { font-size: min(13rem, calc((100vw - 2 * var(--gutter)) * 0.52 / 6.1)); }
+  }
+  .t-cond {
+    font-weight: 850;
+    font-variation-settings: "wdth" 62;
+    text-transform: uppercase;
+    letter-spacing: -0.012em;
+    line-height: 0.88;
+  }
+  /* Editorial heading in sentence case. */
   .t-headline {
-    font-weight: 800;
-    font-variation-settings: "wdth" 118;
-    letter-spacing: -0.025em;
-    line-height: 0.95;
+    font-weight: 750;
+    font-variation-settings: "wdth" 100;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
     text-wrap: balance;
   }
   .t-lead {
-    font-size: clamp(1.3rem, 1.05rem + 1vw, 2rem);
-    line-height: 1.22;
-    font-weight: 450;
-    letter-spacing: -0.012em;
+    font-size: clamp(1.3rem, 1.05rem + 0.9vw, 1.9rem);
+    line-height: 1.24;
+    font-weight: 420;
+    letter-spacing: -0.015em;
     text-wrap: pretty;
   }
   .t-body {
-    max-width: 62ch;
+    max-width: 60ch;
     text-wrap: pretty;
   }
-  /* Condensed slug type: the voice of the margins (file names, folios, specs). */
-  .t-slug {
-    font-variation-settings: "wdth" 62;
+  /* Technical label: mono capitals for numbers, categories, metadata. */
+  .t-label {
+    font-family: var(--font-mono);
+    font-size: 0.71875rem;
     font-weight: 500;
-    font-size: 0.8125rem;
-    letter-spacing: 0.01em;
-    line-height: 1.3;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.35;
     font-feature-settings: "tnum" 1;
   }
+  /* Technical caption: mono in natural case (figure captions, small print). */
+  .t-slug {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.45;
+    font-feature-settings: "tnum" 1;
+  }
+  /* Small sans for UI and short metadata values. */
   .t-meta {
-    font-variation-settings: "wdth" 75;
+    font-variation-settings: "wdth" 88;
     font-weight: 600;
     font-size: 0.9375rem;
     line-height: 1.35;
@@ -123,7 +161,7 @@
     background-position: center;
     background-repeat: no-repeat;
     mix-blend-mode: multiply;
-    opacity: 0.2;
+    opacity: 0.14;
   }
   .surface-ink {
     background-color: var(--color-carbon);
@@ -138,7 +176,7 @@
     z-index: -1;
     pointer-events: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity: 0.09;
+    opacity: 0.07;
   }
 
   /* ── Links ─────────────────────────────────────────────────────────────── */
@@ -152,6 +190,32 @@
   .link-ink:hover { background-size: 0% 1px; background-position: 100% 100%; }
 
   .pad-x { padding-inline: var(--gutter); }
+  .section-y { padding-block: var(--section-y); }
+
+  /* Thin rule used to structure the page like a printed grid */
+  .rule-t { border-top: 1px solid currentColor; border-top-color: color-mix(in srgb, currentColor 22%, transparent); }
+  .rule-b { border-bottom: 1px solid currentColor; border-bottom-color: color-mix(in srgb, currentColor 22%, transparent); }
+
+  /* THE PILE (home › Trabajo, components/home/ProjectIndex.tsx). Each project is
+     a full sheet (ProjectCover: 100svh, never under 560px). Sheets stick and the
+     next one is laid on top — only when a whole sheet fits the screen; on a
+     shorter one its foot would be covered before it was ever seen. */
+  .pile { position: relative; --sheet-h: max(100svh, 560px); }
+  .pile-sheet { position: relative; }
+  .pile-sheet + .pile-sheet { box-shadow: 0 -28px 60px -28px rgb(0 0 0 / 0.7); }
+  @media (min-height: 560px) {
+    .pile-sheet { position: sticky; top: 0; }
+  }
+  /* A sheet's resting place; the page's scroll padding is added back so a link
+     to it lands the sheet flush with the top of the screen. */
+  .pile-mark {
+    position: absolute;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+    top: calc(var(--i) * var(--sheet-h) + var(--scroll-pad));
+  }
 }
 
 @keyframes scrollcue {
@@ -159,17 +223,12 @@
   65%, 100% { transform: translateY(210%); }
 }
 
-/* A filtered pile is laid down again */
-@keyframes sheetin {
-  from { opacity: 0; transform: translateY(4vh); }
-}
-
 /* ──────────────────────────────────────────────────────────────────────────
    NAVIGATION — native view transitions (React <ViewTransition> + Link transitionTypes)
-   nav-forward: the opened sheet's key visual + title morph into the case study
-                (.morph); the rest of the old page sinks back, the new page is
-                laid on top like a fresh sheet.
-   nav-back:    a quieter cross-dissolve back to the pile.
+   nav-forward: a project's key visual morphs from the exhibition into the
+                feature (.morph); the old page sinks back, the new page is laid
+                on top like a fresh sheet.
+   nav-back:    a quieter cross-dissolve back.
    ────────────────────────────────────────────────────────────────────────── */
 ::view-transition { pointer-events: none; }
 
@@ -180,14 +239,28 @@
 
 /* Shared objects travel on the press curve */
 ::view-transition-group(.morph) {
-  animation-duration: 780ms;
+  animation-duration: 820ms;
   animation-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
   z-index: 50;
 }
 ::view-transition-old(.morph),
 ::view-transition-new(.morph) {
-  animation-duration: 780ms;
+  animation-duration: 820ms;
   animation-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
+}
+/* Photographs change crop between card and feature: fill the moving frame */
+::view-transition-old(.morph-photo),
+::view-transition-new(.morph-photo) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 820ms;
+  animation-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
+}
+::view-transition-group(.morph-photo) {
+  animation-duration: 820ms;
+  animation-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
+  z-index: 50;
+  overflow: clip;
 }
 
 @keyframes vt-sink { to { opacity: 0.35; transform: scale(0.94); filter: brightness(0.55); } }
@@ -202,7 +275,6 @@
 }
 ::view-transition-new(.page-lay) {
   animation: 760ms cubic-bezier(0.7, 0, 0.2, 1) both vt-lay;
-  box-shadow: 0 -40px 80px -30px rgba(0, 0, 0, 0.6);
 }
 ::view-transition-old(.page-fade-out) { animation: 220ms ease-in both vt-fade-out; }
 ::view-transition-new(.page-fade-in) { animation: 420ms ease-out 100ms both vt-fade-in; }
