@@ -77,7 +77,7 @@ export const site = {
 
   /** Only profiles that exist. `null` = not rendered. */
   socials: {
-    instagram: { handle: "season_xxv_", url: "https://www.instagram.com/season_xxv_/" },
+    instagram: { handle: "season.21_", url: "https://www.instagram.com/season.21_/" },
     linkedin: null as null | { handle: string; url: string },
     behance: null as null | { handle: string; url: string },
   },
